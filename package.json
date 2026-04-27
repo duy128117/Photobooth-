@@ -1,0 +1,14 @@
+{
+  "name": "photobooth-fullstack",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@mediapipe/selfie_segmentation": "^0.1.1675465747",
+    "face-api.js": "^0.22.2",
+    "html2canvas": "^1.4.1",
+    "qrcode": "^1.5.4"
+  }
+}

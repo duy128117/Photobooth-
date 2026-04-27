@@ -1,0 +1,118 @@
+{
+  "users": [
+    {
+      "id": "user_186bf618128921e1",
+      "email": "duy12081107@gmail.com",
+      "username": "duy128",
+      "name": "duy",
+      "passwordHash": "7de8bb9ac8c16c93c5ca090957ed5b1e:6cc92fa9f31cc562f078b6c7747681d57fd3d6d969589456df4087c7e698b0c153c48d004e4b21124b9bece860a18f4fce38bb0c13a012716c3875517e3cc3cc",
+      "isVerified": true,
+      "verifyTokenHash": "",
+      "verifyTokenExpiresAt": "",
+      "verifiedAt": "2026-04-20T17:38:51.215Z",
+      "createdAt": "2026-04-20T17:38:51.215Z"
+    }
+  ],
+  "sessions": [
+    {
+      "token": "707c50e7c562c9bbb1efea1a7d93663e1e8eaa7742107575",
+      "userId": "user_186bf618128921e1",
+      "createdAt": "2026-04-20T17:38:51.215Z",
+      "expiresAt": "2026-04-27T17:38:51.215Z"
+    },
+    {
+      "token": "4a6c220fdd4aa4ac1a582a9e6de0aa5069d6fd6d62b02eef",
+      "userId": "user_186bf618128921e1",
+      "createdAt": "2026-04-23T12:13:59.095Z",
+      "expiresAt": "2026-04-30T12:13:59.095Z"
+    },
+    {
+      "token": "34bff125d984af0f5418ee1f3ead78109108de3e81671a79",
+      "userId": "user_186bf618128921e1",
+      "createdAt": "2026-04-23T12:33:32.474Z",
+      "expiresAt": "2026-04-30T12:33:32.474Z"
+    },
+    {
+      "token": "16220ff21504eaff2c017fc492d25e46a8764e5bd45924f5",
+      "userId": "user_186bf618128921e1",
+      "createdAt": "2026-04-23T16:21:57.536Z",
+      "expiresAt": "2026-04-30T16:21:57.536Z"
+    },
+    {
+      "token": "d6dd7437e03483d97af9138e9d749732d401ad316a76f306",
+      "userId": "user_186bf618128921e1",
+      "createdAt": "2026-04-23T16:40:00.226Z",
+      "expiresAt": "2026-04-30T16:40:00.226Z"
+    }
+  ],
+  "pendingRegistrations": [],
+  "projects": [],
+  "events": [],
+  "templates": [
+    {
+      "id": "tpl_romantic",
+      "name": "Romantic",
+      "background": "#fff4f7",
+      "filter": "warm",
+      "layout": "polaroid",
+      "overlays": {
+        "eventTitle": "Romantic Moments",
+        "quote": "Love looks good on us."
+      },
+      "createdAt": "2026-04-20T17:08:22.811Z",
+      "createdBy": "system"
+    },
+    {
+      "id": "tpl_vintage",
+      "name": "Vintage",
+      "background": "#f5ead7",
+      "filter": "sepia",
+      "layout": "classic-strip",
+      "overlays": {
+        "eventTitle": "Vintage Booth",
+        "quote": "Golden hour forever."
+      },
+      "createdAt": "2026-04-20T17:08:22.812Z",
+      "createdBy": "system"
+    },
+    {
+      "id": "tpl_kpop",
+      "name": "K-Pop",
+      "background": "#f0efff",
+      "filter": "cool",
+      "layout": "k-style-4",
+      "overlays": {
+        "eventTitle": "Seoul Night",
+        "quote": "Main character energy."
+      },
+      "createdAt": "2026-04-20T17:08:22.812Z",
+      "createdBy": "system"
+    },
+    {
+      "id": "tpl_birthday",
+      "name": "Birthday",
+      "background": "#fff7d8",
+      "filter": "none",
+      "layout": "collage-2x2",
+      "overlays": {
+        "eventTitle": "Birthday Booth",
+        "quote": "Cake, chaos, camera."
+      },
+      "createdAt": "2026-04-20T17:08:22.812Z",
+      "createdBy": "system"
+    },
+    {
+      "id": "tpl_minimal",
+      "name": "Minimalist",
+      "background": "#ffffff",
+      "filter": "none",
+      "layout": "postcard",
+      "overlays": {
+        "eventTitle": "Minimal Mood",
+        "quote": "Clean frames, clear memories."
+      },
+      "createdAt": "2026-04-20T17:08:22.812Z",
+      "createdBy": "system"
+    }
+  ]
+}

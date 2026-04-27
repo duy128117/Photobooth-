@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ảnh nhanh</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/assets/favicon.svg">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="stylesheet" href="assets/css/style.css">
+  </head>
+  <body class="booth-app">
+    <div class="container booth-shell">
+      <header class="topbar topbar--modern">
+        <div class="topbar-brand">
+          <p class="eyebrow">Ảnh nhanh</p>
+          <h1 class="page-title">Ảnh nhanh</h1>
+        </div>
+        <div class="topbar-actions">
+          <a class="topbar-link" href="/gallery.html">
+            <span aria-hidden="true">&#9633;</span>
+            Thư viện
+          </a>
+          <button id="theme-toggle" class="theme-toggle theme-toggle--pill" type="button" aria-label="Switch theme">
+            <span class="theme-toggle__icon" aria-hidden="true">&#9788;</span>
+            <span class="theme-toggle__text">Tối</span>
+          </button>
+          <div class="auth-panel auth-panel--compact user-menu" id="auth-panel">
+            <button class="user-pill" type="button" aria-haspopup="true" aria-expanded="false">
+              <span class="user-pill__icon" aria-hidden="true">&#9675;</span>
+              <span class="auth-state" id="auth-state">Người dùng</span>
+              <span class="user-pill__caret" aria-hidden="true">&#8964;</span>
+            </button>
+            <div class="auth-buttons user-menu__actions">
+              <a id="login-link" class="nav-link" href="/login.html">Đăng nhập</a>
+              <button id="logout-btn" class="button button-secondary" type="button">Đăng xuất</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="capture-section active" id="capture-section">
+        <div class="capture-grid">
+          <div class="capture-main">
+            <div class="section-heading capture-heading">
+              <div>
+                <p class="section-kicker">Chụp ảnh</p>
+                <h2>Chụp 3 ảnh và tạo dải ảnh của bạn &#10024;</h2>
+              </div>
+              <span class="status-pill" id="capture-status">0 / 3</span>
+            </div>
+
+            <div class="capture-stage">
+              <div class="video-container">
+                <video id="video" autoplay muted aria-label="Xem trước camera"></video>
+                <canvas id="camera-preview" aria-hidden="true"></canvas>
+                <div id="countdown" aria-live="assertive"></div>
+              </div>
+
+              <div class="capture-actions capture-actions--hero">
+                <button id="capture-btn" class="button button--capture" type="button">Chụp</button>
+                <button id="skip-to-upload-btn" class="button button-secondary button--ghost" type="button">Tải lên</button>
+              </div>
+
+              <p class="hint capture-hint">Nhấn nút để chụp ảnh</p>
+              <p class="hint capture-hint capture-hint--debug" id="capture-debug">Sẵn sàng chụp</p>
+            </div>
+
+            <div class="gallery-panel">
+              <div class="gallery-panel__head">
+                <h3>Ảnh của bạn</h3>
+                <button id="clear-all-btn" class="text-button text-button--danger" type="button">Xóa tất cả</button>
+              </div>
+              <div class="image-grid image-grid--capture" id="capture-gallery"></div>
+            </div>
+            <div id="error-message" role="alert"></div>
+          </div>
+
+          <aside class="capture-sidebar">
+            <div class="settings-card">
+              <div class="control-section">
+                <label>Cài đặt ảnh</label>
+                <div class="sidebar-stack">
+                  <div class="sidebar-group">
+                    <div class="sidebar-label">Khung</div>
+                    <div class="layout-grid" role="group" aria-label="Bố cục khung">
+                      <button class="layout-option active" type="button" data-layout="classic-strip">3 Dọc</button>
+                      <button class="layout-option" type="button" data-layout="landscape-2">2 Ngang</button>
+                      <button class="layout-option" type="button" data-layout="collage-2x2">4 Lưới</button>
+                    </div>
+                  </div>
+
+                  <div class="sidebar-group">
+                    <div class="sidebar-label">Chế độ</div>
+                    <div class="layout-grid capture-mode-grid" role="group" aria-label="Chọn chế độ chụp ảnh">
+                      <button class="layout-option active" type="button" data-section-mode="capture">Chụp</button>
+                      <button class="layout-option" type="button" data-section-mode="upload" id="upload-mode-pill">Tải lên</button>
+                    </div>
+                  </div>
+
+                  <div class="sidebar-group capture-ai">
+                    <div class="sidebar-label">Phông nền ảo</div>
+                    <div class="layout-grid" id="camera-ai-grid" role="group" aria-label="Phông nền ảo">
+                      <button class="layout-option active" type="button" data-ai-mode="none">Không</button>
+                      <button class="layout-option" type="button" data-ai-mode="blur">Làm mờ</button>
+                      <button class="layout-option" type="button" data-ai-mode="sky">Bầu trời</button>
+                      <button class="layout-option" type="button" data-ai-mode="studio">Studio</button>
+                    </div>
+                  </div>
+
+                  <div class="sidebar-group capture-stickers">
+                    <div class="sidebar-label">Sticker</div>
+                    <div class="sticker-picker" id="capture-sticker-picker" role="group" aria-label="Sticker chụp ảnh">
+                      <button class="sticker-chip active" type="button" data-capture-sticker="none">Không</button>
+                      <button class="sticker-chip" type="button" data-capture-sticker="glasses">Kính</button>
+                      <button class="sticker-chip" type="button" data-capture-sticker="bow">Nơ</button>
+                      <button class="sticker-chip" type="button" data-capture-sticker="crown">Vương miện</button>
+                      <button class="sticker-chip" type="button" data-capture-sticker="sparkle">Lấp lánh</button>
+                      <button class="sticker-chip" type="button" data-capture-sticker="heart">Trái tim</button>
+                      <button class="sticker-chip" type="button" data-capture-sticker="blush">Má hồng</button>
+                    </div>
+                    <p class="sticker-note">Sticker sẽ bám mặt mượt hơn nếu trình duyệt hỗ trợ FaceDetector.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tip-card">
+                <div class="tip-card__title">Mẹo</div>
+                <p>Chọn nơi đủ sáng để ảnh đẹp hơn</p>
+              </div>
+
+              <div class="ready-card">
+                <div class="ready-card__icon" aria-hidden="true">&#128247;</div>
+                <h3>Sẵn sàng chụp chưa?</h3>
+                <p>Nhấn nút chụp để tạo ra điều kỳ diệu &#10024;</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="upload-section" id="upload-section">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Ảnh nhanh</p>
+            <h2>Tải ảnh lên</h2>
+          </div>
+          <span class="status-pill" id="upload-status">0</span>
+        </div>
+
+        <div class="upload-slots" id="upload-gallery"></div>
+
+        <div class="section-actions">
+          <button id="open-editor-btn" class="button" type="button">Chỉnh sửa</button>
+          <button id="back-to-camera-btn" class="button button-secondary" type="button">Quay lại</button>
+        </div>
+      </section>
+
+      <section class="editor" id="editor">
+        <div class="photostrip-stage">
+          <div class="section-heading section-heading--editor">
+            <div>
+            <p class="section-kicker">Ảnh nhanh</p>
+            <h2>Chỉnh sửa</h2>
+            </div>
+            <span class="status-pill" id="editor-status">Ảnh nhanh</span>
+          </div>
+
+          <div class="photostrip-container">
+            <div class="photostrip layout-classic-strip" id="photostrip">
+              <div id="photostrip-images" class="photostrip-images"></div>
+              <div id="overlay-stack" class="overlay-stack"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <div class="control-section">
+            <label>Bố cục</label>
+            <div class="layout-grid" id="layout-grid" role="group" aria-label="Bố cục trình chỉnh sửa">
+              <button class="layout-option active" type="button" data-layout="classic-strip">Cổ điển</button>
+              <button class="layout-option" type="button" data-layout="landscape-2">Ngang</button>
+              <button class="layout-option" type="button" data-layout="k-style-4">K-Style 4 khung</button>
+              <button class="layout-option" type="button" data-layout="polaroid">Ảnh Polaroid</button>
+              <button class="layout-option" type="button" data-layout="postcard">Bưu thiếp</button>
+              <button class="layout-option" type="button" data-layout="collage-2x2">Cắt dán</button>
+            </div>
+          </div>
+
+          <div class="control-section text-panel">
+            <label>Văn bản</label>
+            <div class="field-grid">
+              <input id="event-title-input" class="text-input" type="text" maxlength="32" placeholder="Tiêu đề" />
+              <input id="name-input" class="text-input" type="text" maxlength="28" placeholder="Tên" />
+              <input id="quote-input" class="text-input" type="text" maxlength="48" placeholder="Câu nói" />
+              <input id="custom-date-input" class="text-input" type="text" maxlength="24" placeholder="Ngày" />
+            </div>
+          </div>
+
+          <div class="control-section image-adjustments-panel">
+            <label>Ảnh</label>
+            <div id="image-adjustments" class="adjustment-list"></div>
+          </div>
+
+          <div class="control-section stickers">
+            <label>Sticker</label>
+            <div id="sticker-categories" class="category-list" role="group" aria-label="Danh mục sticker">
+              <button class="category-chip active" type="button" data-category="fun">Vui nhộn</button>
+              <button class="category-chip" type="button" data-category="love">Tình yêu</button>
+              <button class="category-chip" type="button" data-category="travel">Du lịch</button>
+            </div>
+            <div id="sticker-palette" class="option-grid sticker-palette"></div>
+            <label class="upload-inline">
+              <span>Tải lên</span>
+              <input id="sticker-upload-input" type="file" accept="image/png,image/webp,image/jpeg" />
+            </label>
+            <div id="sticker-tools" class="sticker-tools is-disabled">
+              <div class="slider-group">
+                <label for="sticker-size-range">Kích thước</label>
+                <input id="sticker-size-range" type="range" min="0.6" max="2.2" step="0.1" value="1" />
+              </div>
+              <div class="slider-group">
+                <label for="sticker-rotate-range">Xoay</label>
+                <input id="sticker-rotate-range" type="range" min="-180" max="180" step="1" value="0" />
+              </div>
+              <div class="sticker-tool-actions">
+                <button id="sticker-front-btn" class="button button-secondary" type="button">Lên trước</button>
+                <button id="sticker-back-btn" class="button button-secondary" type="button">Ra sau</button>
+                <button id="sticker-delete-btn" class="button button-secondary" type="button">Xóa</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="control-section backgrounds">
+            <label>Nền</label>
+            <div class="option-grid" role="group" aria-label="Màu nền">
+              <button data-bg="#ffffff" class="button" type="button" aria-label="Nền trắng"></button>
+              <button data-bg="#111111" class="button" type="button" aria-label="Nền đen"></button>
+              <button data-bg="#f0f0f0" class="button" type="button" aria-label="Nền xám nhạt"></button>
+              <button data-bg="#add8e6" class="button" type="button" aria-label="Nền xanh nhạt"></button>
+              <button data-bg="#ff99cc" class="button" type="button" aria-label="Nền hồng"></button>
+            </div>
+          </div>
+
+          <div class="control-section filters">
+            <label>Bộ lọc</label>
+            <div class="filter-list" role="group" aria-label="Bộ lọc ảnh">
+              <button data-filter="black-and-white" class="button" type="button">Đen trắng</button>
+              <button data-filter="sepia" class="button" type="button">Nâu đỏ</button>
+              <button data-filter="warm" class="button" type="button">Ấm</button>
+              <button data-filter="cold" class="button" type="button">Lạnh</button>
+              <button data-filter="cool" class="button" type="button">Mát</button>
+              <button data-filter="none" class="button active" type="button">Không</button>
+            </div>
+          </div>
+
+          <div class="control-section toggle-group">
+            <label class="toggle-row">
+              <input type="checkbox" id="enable-date" checked />
+              <span>Ngày</span>
+            </label>
+          </div>
+
+          <div class="control-section">
+            <label>Lịch sử</label>
+            <div class="action-buttons">
+              <button id="undo-btn" class="button button-secondary" type="button">Hoàn tác</button>
+              <button id="redo-btn" class="button button-secondary" type="button">Làm lại</button>
+            </div>
+            <p class="hint" id="draft-status">Ảnh nhanh</p>
+          </div>
+
+          <div class="action-buttons">
+            <button id="preview-btn" class="button" type="button">Xem trước</button>
+            <button id="save-project-btn" class="button" type="button">Lưu</button>
+            <button id="share-btn" class="button button-secondary" type="button">Chia sẻ</button>
+            <button id="qr-btn" class="button button-secondary" type="button">QR</button>
+            <button id="download-btn" class="button" type="button">Tải xuống</button>
+            <button id="retake-btn" class="button button-secondary" type="button">Đặt lại</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="scrapbook" id="scrapbook">
+        <div class="section-heading section-heading--editor">
+          <div>
+            <p class="section-kicker">Ảnh nhanh</p>
+            <h2>Xem trước</h2>
+          </div>
+          <button id="back-to-editor-btn" class="button button-secondary" type="button">Quay lại</button>
+        </div>
+        <div class="scrapbook-canvas" id="scrapbook-canvas"></div>
+      </section>
+
+      <div class="toast" id="toast" aria-live="polite"></div>
+      <div class="share-modal is-hidden" id="share-modal" aria-hidden="true">
+        <div class="share-modal__backdrop" id="share-modal-close" aria-hidden="true"></div>
+        <div class="share-modal__card" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
+          <button id="share-close-btn" class="share-modal__close" type="button" aria-label="Đóng hộp thoại chia sẻ">x</button>
+          <p class="section-kicker">Ảnh nhanh</p>
+          <h2 id="share-modal-title">Chia sẻ</h2>
+          <div class="share-qr">
+            <img id="share-qr-image" alt="Mã QR" />
+          </div>
+          <a id="share-link" class="nav-link share-link" href="#" target="_blank" rel="noreferrer">Mở liên kết</a>
+        </div>
+      </div>
+      <div class="footer"></div>
+    </div>
+    <script type="module" src="assets/js/pwa.js"></script>
+    <script type="module" src="assets/js/app.js"></script>
+  </body>
+</html>

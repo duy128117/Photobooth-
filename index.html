@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ảnh nhanh</title>
+    <meta name="theme-color" content="#c9a84c">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="stylesheet" href="/assets/css/landing.css">
+  </head>
+  <body>
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+    <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+    <nav aria-label="Primary">
+      <div class="nav-logo">PHOTOBOOTH</div>
+      <div class="nav-links">
+        <button id="theme-toggle" class="theme-toggle theme-toggle--landing" type="button" aria-label="Switch theme">
+          <span class="theme-toggle__icon" aria-hidden="true">o</span>
+          <span class="theme-toggle__text">Tối</span>
+        </button>
+        <a href="/login.html?next=/photobooth.html" class="nav-auth">Đăng nhập</a>
+        <a href="/login.html?next=/photobooth.html&mode=register" class="nav-auth">Đăng ký</a>
+        <a href="#features">Tính năng</a>
+        <a href="/gallery.html">Thư viện</a>
+        <a href="#how">Cách dùng</a>
+        <a href="/login.html?next=/photobooth.html" class="nav-cta">Bắt đầu</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="film-strip" aria-hidden="true">
+        <div class="film-hole"></div><div class="film-hole"></div>
+        <div class="film-hole"></div><div class="film-hole"></div>
+        <div class="film-hole"></div><div class="film-hole"></div>
+        <div class="film-hole"></div><div class="film-hole"></div>
+        <div class="film-hole"></div><div class="film-hole"></div>
+        <div class="film-hole"></div><div class="film-hole"></div>
+      </div>
+
+      <div class="film-strip-right" aria-hidden="true">
+        <div class="film-hole"></div><div class="film-hole"></div>
+        <div class="film-hole"></div><div class="film-hole"></div>
+        <div class="film-hole"></div><div class="film-hole"></div>
+        <div class="film-hole"></div><div class="film-hole"></div>
+        <div class="film-hole"></div><div class="film-hole"></div>
+        <div class="film-hole"></div><div class="film-hole"></div>
+      </div>
+
+      <div class="hero-inner">
+        <div>
+          <div class="hero-eyebrow fade-up">Ảnh nhanh trực tuyến · Miễn phí</div>
+          <h1 class="hero-title fade-up">
+            Chụp khoảnh khắc
+            <em>đáng nhớ.</em>
+          </h1>
+          <p class="hero-desc fade-up">
+            Tạo photo strip phong cách như máy chụp tự động ngày xưa ngay trên trình duyệt. Khi nhấn bắt đầu hoặc chụp ngay, bạn sẽ được đưa vào trang chụp.
+          </p>
+          <div class="hero-actions fade-up">
+            <a href="/login.html?next=/photobooth.html" class="btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M20 7h-3l-2-3H9L7 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"></path>
+              </svg>
+              Chụp ngay
+            </a>
+            <a href="#features" class="btn-ghost">Xem tính năng</a>
+          </div>
+        </div>
+
+        <div class="strip-card" aria-hidden="true">
+          <div class="badge">MỚI</div>
+          <div class="strip-frame">P1</div>
+          <div class="strip-frame">P2</div>
+          <div class="strip-frame">P3</div>
+          <div class="strip-date">Ảnh nhanh · 2026</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="features-header">
+        <span class="section-label">Tinh nang</span>
+        <h2 class="section-title">Mọi thứ bạn cần<br /><span>trong một khung hình.</span></h2>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-item">
+          <span class="feature-num">01</span>
+          <span class="feature-icon">01</span>
+          <div class="feature-name">Bộ lọc phim</div>
+          <p class="feature-desc">Bộ lọc film, tông màu ấm lạnh, đen trắng và sepia để ảnh nhìn có cảm xúc hơn.</p>
+        </div>
+
+        <div class="feature-item">
+          <span class="feature-num">02</span>
+          <span class="feature-icon">02</span>
+          <div class="feature-name">Sticker và trang trí</div>
+          <p class="feature-desc">Kéo thả sticker, đổi màu nền và chọn layout để cá nhân hóa photostrip theo cách riêng.</p>
+        </div>
+
+        <div class="feature-item">
+          <span class="feature-num">03</span>
+          <span class="feature-icon">03</span>
+          <div class="feature-name">Tải xuống nhanh</div>
+          <p class="feature-desc">Xuất ảnh chất lượng cao nhanh gọn để lưu về máy hoặc chia sẻ ngay.</p>
+        </div>
+
+        <div class="feature-item">
+          <span class="feature-num">04</span>
+          <span class="feature-icon">04</span>
+          <div class="feature-name">Webcam và tải lên</div>
+          <p class="feature-desc">Mở webcam để chụp, hoặc tải ảnh có sẵn từ điện thoại và máy tính bảng.</p>
+        </div>
+
+        <div class="feature-item">
+          <span class="feature-num">05</span>
+          <span class="feature-icon">05</span>
+          <div class="feature-name">Tương thích</div>
+          <p class="feature-desc">Chạy tốt trên điện thoại, máy tính bảng và desktop với layout co giãn đúng.</p>
+        </div>
+
+        <div class="feature-item">
+          <span class="feature-num">06</span>
+          <span class="feature-icon">06</span>
+          <div class="feature-name">Tài khoản thật</div>
+          <p class="feature-desc">Đăng ký, đăng nhập và lưu dự án để quay lại chỉnh sửa bất cứ lúc nào.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="how" id="how">
+      <div class="how-inner">
+        <div>
+          <span class="section-label">Cách dùng</span>
+          <h2 class="section-title how-title">Chỉ 3 bước<br /><span>là xong.</span></h2>
+
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">01</div>
+              <div class="step-text">
+                <h4>Bắt đầu</h4>
+                <p>Từ trang chủ, nhấn bắt đầu để đi vào trang đăng nhập và mở editor.</p>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-num">02</div>
+              <div class="step-text">
+                <h4>Chụp hoặc tải lên</h4>
+                <p>Mở camera hoặc chọn ảnh từ máy, sau đó chỉnh filter, layout, sticker và text.</p>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-num">03</div>
+              <div class="step-text">
+                <h4>Tải về</h4>
+                <p>Xem trước kết quả, lưu project nếu cần và tải photostrip ngay trên trình duyệt.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="how-preview" aria-hidden="true">
+          <div class="spin-label">
+            <div class="spin-circle"></div>
+            <div class="spin-inner">PB</div>
+          </div>
+
+          <div class="strip-preview">
+            <div class="sf">A</div>
+            <div class="sf">B</div>
+            <div class="sf">C</div>
+            <div class="sd">your moment · 2026</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cta-banner">
+      <h2 class="cta-title">Sẵn sàng tạo<br /><em>kỷ niệm đầu tiên?</em></h2>
+      <p class="cta-sub">Miễn phí · Chụp nhanh · Vào trang chụp sau khi nhấn bắt đầu</p>
+      <a href="/login.html?next=/photobooth.html" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M20 7h-3l-2-3H9L7 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"></path>
+        </svg>
+        Bắt đầu chụp ngay
+      </a>
+    </div>
+
+    <footer>
+      <div class="footer-logo">PHOTOBOOTH</div>
+      <div class="footer-copy">© 2026 · Made in Vietnam</div>
+      <div class="footer-links">
+        <a href="/gallery.html">Thư viện</a>
+        <a href="/login.html?next=/photobooth.html">Đăng nhập</a>
+      </div>
+    </footer>
+
+    <script type="module" src="/assets/js/pwa.js"></script>
+    <script type="module" src="/assets/js/home.js"></script>
+  </body>
+</html>

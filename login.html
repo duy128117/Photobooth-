@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ảnh nhanh</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/assets/favicon.svg">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="stylesheet" href="/assets/css/auth.css">
+  </head>
+  <body class="login-cinema">
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+    <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+    <div class="bg-blob blob1" aria-hidden="true"></div>
+    <div class="bg-blob blob2" aria-hidden="true"></div>
+    <div class="bg-blob blob3" aria-hidden="true"></div>
+
+    <div class="film-top" aria-hidden="true">
+      <span class="film-logo">FLASHFRAME</span>
+      <div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div>
+      <div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div>
+      <div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div>
+      <span class="film-date">2026 · ANALOG MEMORY</span>
+    </div>
+    <div class="film-bottom" aria-hidden="true">
+      <div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div>
+      <div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div>
+      <div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div>
+      <div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div><div class="film-hole-h"></div>
+    </div>
+
+    <a id="back-link" href="/index.html" class="back-link">
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 2L4 6l4 4"/></svg>
+      Ve trang chu
+    </a>
+
+    <main class="auth-card" id="auth-card" aria-label="Authentication">
+      <div class="card-divider" aria-hidden="true"></div>
+
+      <section class="form-side" id="form-side" aria-live="polite">
+        <div class="form-eyebrow">Chao tro lai</div>
+        <div class="form-topline">
+          <h2 id="auth-heading" class="form-title">Đăng <em>nhập.</em></h2>
+        </div>
+        <p id="auth-subcopy" class="form-subtitle">Tiếp tục lưu giữ những khoảnh khắc của bạn.</p>
+
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch theme">
+          <span class="theme-toggle__icon" aria-hidden="true">o</span>
+          <span class="theme-toggle__text">Tối</span>
+        </button>
+
+        <div id="auth-note" class="auth-note is-hidden">
+          <a id="preview-link" class="auth-link" href="#" target="_blank" rel="noreferrer">Mở mail xác minh</a>
+          <button id="resend-btn" class="auth-link auth-link--button" type="button">Gửi lại mail</button>
+        </div>
+
+        <div class="auth-tabs" aria-label="Auth mode">
+          <button class="auth-tab is-active" id="login-tab" type="button" data-mode="login">Đăng nhập</button>
+          <button class="auth-tab" id="register-tab" type="button" data-mode="register">Đăng ký</button>
+        </div>
+
+        <div id="auth-steps" class="auth-steps is-hidden" aria-hidden="true">
+          <span class="auth-step is-active" id="step-account">1</span>
+          <span class="auth-step" id="step-code">2</span>
+        </div>
+
+        <form id="auth-form" class="auth-form" novalidate>
+          <div id="auth-step-account">
+            <label class="auth-field auth-field--name" id="name-field">
+              <span>Ten</span>
+              <input id="auth-name" type="text" placeholder="Nguyen Van A" autocomplete="name" />
+            </label>
+            <label class="auth-field auth-field--username" id="username-field">
+              <span>Ten dang nhap</span>
+              <input id="auth-username" type="text" placeholder="duynguyen" autocomplete="username" />
+            </label>
+            <label class="auth-field">
+              <span>Email / Ten dang nhap</span>
+              <input id="auth-email" type="text" placeholder="ban@example.com" autocomplete="username" required />
+            </label>
+            <label class="auth-field" id="password-field">
+              <span>Mat khau</span>
+              <input id="auth-password" type="password" placeholder="••••••••" autocomplete="current-password" required />
+            </label>
+            <p class="forgot">Quên mật khẩu?</p>
+            <label class="auth-field auth-field--confirm is-hidden" id="confirm-field">
+              <span>Nhập lại mật khẩu</span>
+              <input id="auth-confirm-password" type="password" placeholder="Nhập lại mật khẩu" autocomplete="new-password" />
+            </label>
+          </div>
+
+          <div id="auth-step-code" class="is-hidden">
+            <label class="auth-field">
+              <span>Ma xac nhan</span>
+              <input id="auth-code" type="text" inputmode="numeric" maxlength="6" placeholder="6 số" />
+            </label>
+          </div>
+
+          <button id="auth-submit" class="submit-btn" type="submit">Đăng nhập</button>
+
+          <div class="divider" aria-hidden="true"><span>hoặc</span></div>
+          <button class="google-btn" type="button">
+            <span class="google-dot" aria-hidden="true"></span>
+            Tiếp tục với Google
+          </button>
+        </form>
+
+        <div class="auth-status-row">
+          <span id="auth-status" class="auth-status">Ảnh nhanh</span>
+        </div>
+      </section>
+
+      <aside class="slide-panel at-right" id="slide-panel" aria-hidden="true">
+        <div class="panel-strip">
+          <div class="panel-frame">📸</div>
+          <div class="panel-frame">🎞</div>
+          <div class="panel-frame">✨</div>
+          <div class="panel-date">your moment · 2026</div>
+        </div>
+        <div class="panel-title" id="panel-title">Chua co<br><em>tai khoan?</em></div>
+        <p class="panel-desc" id="panel-desc">Đăng ký miễn phí để lưu và chia sẻ photo strip của bạn.</p>
+        <button class="panel-btn" id="panel-toggle-btn" type="button">Đăng ký ngay →</button>
+      </aside>
+    </main>
+
+    <script type="module" src="/assets/js/pwa.js"></script>
+    <script type="module" src="/assets/js/login.js"></script>
+  </body>
+</html>
