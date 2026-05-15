@@ -15,22 +15,26 @@ export function createImageItem(src) {
     zoom: 1,
     offsetX: 0,
     offsetY: 0,
-    rotation: 0
+    rotation: 0,
+    faceGeometry: null
   };
 }
 
 export function createStickerItem(config) {
+  const anchor = config.anchor || null;
+  const defaultPosition = getDefaultStickerPositionForAnchor(anchor);
   return {
     id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     type: config.type,
     character: config.character || "",
     src: config.src || "",
     category: config.category || "custom",
-    x: 50,
-    y: 16,
+    x: typeof config.x === "number" ? config.x : defaultPosition.x,
+    y: typeof config.y === "number" ? config.y : defaultPosition.y,
     scale: 1,
     rotation: 0,
-    zIndex: config.zIndex || 5
+    zIndex: config.zIndex || 5,
+    anchor: anchor
   };
 }
 
@@ -216,6 +220,35 @@ function normalizeState() {
 
 function clonePlain(value) {
   return JSON.parse(JSON.stringify(value));
+}
+
+function getDefaultStickerPositionForAnchor(anchor) {
+  if (!anchor || !anchor.part) {
+    return { x: 50, y: 16 };
+  }
+
+  switch (anchor.part) {
+    case "eyes":
+      return { x: 50, y: 22 };
+    case "brow":
+      return { x: 50, y: 18 };
+    case "top":
+    case "top-wide":
+    case "halo":
+      return { x: 50, y: 7 };
+    case "mouth":
+      return { x: 50, y: 56 };
+    case "cheeks":
+      return { x: 50, y: 42 };
+    case "cheek-left":
+      return { x: 42, y: 42 };
+    case "cheek-right":
+      return { x: 58, y: 42 };
+    case "upper-right":
+      return { x: 66, y: 22 };
+    default:
+      return { x: 50, y: 16 };
+  }
 }
 
 function notify() {

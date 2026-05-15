@@ -29,7 +29,17 @@ export async function createAutoCroppedImageItem(src) {
   imageItem.zoom = zoom;
   imageItem.offsetX = clamp((targetCenterX - faceCenterX) * 100, -22, 22);
   imageItem.offsetY = clamp((targetCenterY - faceCenterY) * 100, -24, 24);
+  imageItem.faceGeometry = buildGeometryFromBounds(faceBounds);
   return imageItem;
+}
+
+export async function detectFaceGeometryFromImage(src) {
+  const image = await loadImage(src);
+  const faceBounds = await detectFaceBounds(image);
+  if (!faceBounds) {
+    return null;
+  }
+  return buildGeometryFromBounds(faceBounds);
 }
 
 async function detectFaceBounds(image) {
@@ -102,6 +112,53 @@ async function detectWithFaceApi(image) {
     console.warn("face-api detection unavailable", error);
     return null;
   }
+}
+
+function buildGeometryFromBounds(box) {
+  const width = box.width;
+  const height = box.height;
+  const x = box.x;
+  const y = box.y;
+  const eyeCenter = {
+    x: x + width / 2,
+    y: y + height * 0.4
+  };
+  const leftEye = {
+    x: x + width * 0.36,
+    y: y + height * 0.39
+  };
+  const rightEye = {
+    x: x + width * 0.64,
+    y: y + height * 0.39
+  };
+  const browCenter = {
+    x: x + width / 2,
+    y: y + height * 0.2
+  };
+  const mouthCenter = {
+    x: x + width / 2,
+    y: y + height * 0.73
+  };
+  const noseCenter = {
+    x: x + width / 2,
+    y: y + height * 0.56
+  };
+  const chinCenter = {
+    x: x + width / 2,
+    y: y + height * 0.94
+  };
+
+  return {
+    box: { x: x, y: y, width: width, height: height },
+    eyeCenter: eyeCenter,
+    leftEye: leftEye,
+    rightEye: rightEye,
+    browCenter: browCenter,
+    mouthCenter: mouthCenter,
+    noseCenter: noseCenter,
+    chinCenter: chinCenter,
+    eyeDistance: Math.sqrt(Math.pow(leftEye.x - rightEye.x, 2) + Math.pow(leftEye.y - rightEye.y, 2))
+  };
 }
 
 async function loadFaceApi() {

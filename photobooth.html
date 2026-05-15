@@ -52,7 +52,7 @@
 
             <div class="capture-stage">
               <div class="video-container">
-                <video id="video" autoplay muted aria-label="Xem trước camera"></video>
+                <video id="video" autoplay muted playsinline aria-label="Xem trước camera"></video>
                 <canvas id="camera-preview" aria-hidden="true"></canvas>
                 <div id="countdown" aria-live="assertive"></div>
               </div>
@@ -115,11 +115,17 @@
                       <button class="sticker-chip" type="button" data-capture-sticker="glasses">Kính</button>
                       <button class="sticker-chip" type="button" data-capture-sticker="bow">Nơ</button>
                       <button class="sticker-chip" type="button" data-capture-sticker="crown">Vương miện</button>
+                      <button class="sticker-chip" type="button" data-capture-sticker="flower-crown">Vòng hoa</button>
+                      <button class="sticker-chip" type="button" data-capture-sticker="bunny-ears">Tai thỏ</button>
                       <button class="sticker-chip" type="button" data-capture-sticker="sparkle">Lấp lánh</button>
                       <button class="sticker-chip" type="button" data-capture-sticker="heart">Trái tim</button>
                       <button class="sticker-chip" type="button" data-capture-sticker="blush">Má hồng</button>
+                      <button class="sticker-chip" type="button" data-capture-sticker="mustache">Râu</button>
+                      <button class="sticker-chip" type="button" data-capture-sticker="star-glasses">Kính sao</button>
+                      <button class="sticker-chip" type="button" data-capture-sticker="halo">Hào quang</button>
                     </div>
-                    <p class="sticker-note">Sticker sẽ bám mặt mượt hơn nếu trình duyệt hỗ trợ FaceDetector.</p>
+                    <button id="suggest-capture-sticker-btn" class="button button-secondary capture-sticker-suggest" type="button">AI gợi ý sticker</button>
+                    <p class="sticker-note">Sticker sẽ bám mặt tốt hơn khi trình duyệt hỗ trợ FaceDetector hoặc face-api.</p>
                   </div>
                 </div>
               </div>
@@ -208,6 +214,8 @@
               <button class="category-chip active" type="button" data-category="fun">Vui nhộn</button>
               <button class="category-chip" type="button" data-category="love">Tình yêu</button>
               <button class="category-chip" type="button" data-category="travel">Du lịch</button>
+              <button class="category-chip" type="button" data-category="party">Tiệc</button>
+              <button class="category-chip" type="button" data-category="retro">Retro</button>
             </div>
             <div id="sticker-palette" class="option-grid sticker-palette"></div>
             <label class="upload-inline">

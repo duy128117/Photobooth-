@@ -1,5 +1,6 @@
 ﻿import { LAYOUTS, photoboothState, updateState } from "./state.js";
 import { STICKER_LIBRARY } from "./stickers.js";
+import { detectFaceGeometryFromImage } from "./auto-crop.js";
 
 export function initializeEditor(elements, stickersApi, showToast) {
   const photostrip = elements.photostrip;
@@ -10,6 +11,8 @@ export function initializeEditor(elements, stickersApi, showToast) {
   const filterButtons = Array.from(elements.filterButtons);
   const backgroundButtons = Array.from(elements.backgroundButtons);
   const textInputs = [elements.eventTitleInput, elements.nameInput, elements.quoteInput, elements.customDateInput];
+  const faceGeometryCache = new Map();
+  const faceDetectionPending = new Map();
 
   bindLayoutButtons();
   bindTextInputs();
@@ -104,11 +107,16 @@ export function initializeEditor(elements, stickersApi, showToast) {
     });
 
     elements.stickerPalette.addEventListener("click", function (event) {
-      const button = event.target.closest("[data-sticker-value]");
+      const button = event.target.closest("[data-sticker-id]");
       if (!button) {
         return;
       }
-      stickersApi.createEmojiSticker(button.getAttribute("data-sticker-value"), photoboothState.stickerCategory);
+      const entries = STICKER_LIBRARY[photoboothState.stickerCategory] || [];
+      const entry = entries.find(function (item) {
+        return item.id === button.getAttribute("data-sticker-id");
+      });
+      stickersApi.createLibrarySticker(entry);
+      queueFaceDetectionForCurrentImages();
     });
 
     elements.stickerUploadInput.addEventListener("change", function (event) {
@@ -224,13 +232,14 @@ export function initializeEditor(elements, stickersApi, showToast) {
     });
 
     photoboothState.stickers.forEach(function (sticker) {
+      const anchoredPlacement = sticker.anchor ? resolveAnchoredStickerPlacement(sticker) : null;
       const stickerElement = document.createElement("button");
       stickerElement.type = "button";
       stickerElement.className = "sticker" + (sticker.id === photoboothState.selectedStickerId ? " is-selected" : "");
       stickerElement.setAttribute("aria-label", "Sticker");
-      stickerElement.style.left = sticker.x + "%";
-      stickerElement.style.top = sticker.y + "%";
-      stickerElement.style.setProperty("--sticker-scale", sticker.scale);
+      stickerElement.style.left = (anchoredPlacement ? anchoredPlacement.x : sticker.x) + "%";
+      stickerElement.style.top = (anchoredPlacement ? anchoredPlacement.y : sticker.y) + "%";
+      stickerElement.style.setProperty("--sticker-scale", anchoredPlacement ? anchoredPlacement.scale : sticker.scale);
       stickerElement.style.setProperty("--sticker-rotation", sticker.rotation + "deg");
       stickerElement.style.setProperty("--sticker-z", sticker.zIndex);
       if (sticker.type === "image") {
@@ -252,6 +261,98 @@ export function initializeEditor(elements, stickersApi, showToast) {
       photostrip.appendChild(stickerElement);
       stickersApi.bindSticker(stickerElement, sticker);
     });
+
+    queueFaceDetectionForCurrentImages();
+  }
+
+  function queueFaceDetectionForCurrentImages() {
+    getRenderableImages().forEach(function (imageItem) {
+      if (!imageItem || !imageItem.src || faceGeometryCache.has(imageItem.src) || faceDetectionPending.has(imageItem.src)) {
+        return;
+      }
+
+      if (imageItem.faceGeometry) {
+        faceGeometryCache.set(imageItem.src, imageItem.faceGeometry);
+        return;
+      }
+
+      const detectionPromise = detectFaceGeometryFromImage(imageItem.src)
+        .then(function (geometry) {
+          if (geometry) {
+            faceGeometryCache.set(imageItem.src, geometry);
+            updateState(function () {}, { recordHistory: false });
+          }
+        })
+        .catch(function (error) {
+          console.warn("Face detection for stickers failed", error);
+        })
+        .finally(function () {
+          faceDetectionPending.delete(imageItem.src);
+        });
+
+      faceDetectionPending.set(imageItem.src, detectionPromise);
+    });
+  }
+
+  function resolveAnchoredStickerPlacement(sticker) {
+    const anchor = sticker.anchor;
+    if (!anchor || !anchor.part) {
+      return null;
+    }
+
+    const images = getRenderableImages();
+    const imageIndex = findBestAnchorImageIndex(images, anchor.imageIndex || 0);
+    const imageItem = images[imageIndex];
+    if (!imageItem || !imageItem.src) {
+      return null;
+    }
+
+    const geometry = faceGeometryCache.get(imageItem.src);
+    if (!geometry) {
+      return null;
+    }
+
+    const frame = photostripImages.children[imageIndex];
+    if (!frame) {
+      return null;
+    }
+
+    const frameRect = frame.getBoundingClientRect();
+    const stripRect = photostrip.getBoundingClientRect();
+    if (!frameRect.width || !frameRect.height || !stripRect.width || !stripRect.height) {
+      return null;
+    }
+
+    const image = frame.querySelector("img");
+    if (!image || !image.naturalWidth || !image.naturalHeight) {
+      return null;
+    }
+
+    if (imageItem.faceGeometry && !geometry) {
+      faceGeometryCache.set(imageItem.src, imageItem.faceGeometry);
+    }
+
+    const coverRect = getCoverRect(frameRect.width, frameRect.height, image.naturalWidth, image.naturalHeight);
+    const anchorPoint = getFaceAnchorPoint(geometry, anchor.part);
+    const anchorSize = getFaceAnchorScale(geometry, anchor.part);
+    const displayX = frameRect.left - stripRect.left + coverRect.left + coverRect.width * (anchorPoint.x / image.naturalWidth);
+    const displayY = frameRect.top - stripRect.top + coverRect.top + coverRect.height * (anchorPoint.y / image.naturalHeight);
+
+    return {
+      x: clamp((displayX / stripRect.width) * 100, 4, 96),
+      y: clamp((displayY / stripRect.height) * 100, 4, 96),
+      scale: clamp(anchorSize / 56, 0.6, 3.8)
+    };
+  }
+
+  function findBestAnchorImageIndex(images, fallbackIndex) {
+    for (let index = 0; index < images.length; index += 1) {
+      const imageItem = images[index];
+      if (imageItem && imageItem.src && faceGeometryCache.has(imageItem.src)) {
+        return index;
+      }
+    }
+    return clampIndex(fallbackIndex, images.length - 1);
   }
 
   function renderFilterButtons() {
@@ -287,8 +388,14 @@ export function initializeEditor(elements, stickersApi, showToast) {
     Array.from(elements.stickerCategories.querySelectorAll('[data-category]')).forEach(function (button) {
       button.classList.toggle('active', button.getAttribute('data-category') === photoboothState.stickerCategory);
     });
-    elements.stickerPalette.innerHTML = STICKER_LIBRARY[photoboothState.stickerCategory].map(function (sticker) {
-      return '<button class="button" type="button" data-sticker-value="' + sticker + '" aria-label="Thêm sticker ' + sticker + '">' + sticker + '</button>';
+    const entries = STICKER_LIBRARY[photoboothState.stickerCategory] || [];
+    elements.stickerPalette.innerHTML = entries.map(function (sticker) {
+      return [
+        '<button class="button sticker-palette__button" type="button" data-sticker-id="' + sticker.id + '" aria-label="Thêm sticker ' + sticker.label + '">',
+        '<span class="sticker-palette__icon"><img src="' + sticker.src + '" alt="" /></span>',
+        '<span class="sticker-palette__name">' + escapeHtml(sticker.label) + '</span>',
+        '</button>'
+      ].join('');
     }).join('');
   }
 
@@ -324,6 +431,107 @@ export function initializeEditor(elements, stickersApi, showToast) {
       return '<div class="photostrip-frame"><div class="frame-media"><img src="' + imageItem.src + '" alt="Ảnh xem trước ' + (index + 1) + '" style="filter:' + getFilterStyle(photoboothState.filter) + '; --tx:' + imageItem.offsetX + '%; --ty:' + imageItem.offsetY + '%; --scale:' + imageItem.zoom + '; --rotation:' + imageItem.rotation + 'deg;" /></div></div>';
     }).join('') + '<div class="overlay-stack">' + overlayStack.innerHTML + '</div>';
   }
+}
+
+function getFaceAnchorPoint(geometry, part) {
+  switch (part) {
+    case "eyes":
+      return geometry.eyeCenter;
+    case "brow":
+      return geometry.browCenter;
+    case "top":
+      return {
+        x: geometry.box.x + geometry.box.width / 2,
+        y: geometry.box.y - geometry.box.height * 0.18
+      };
+    case "top-wide":
+      return {
+        x: geometry.box.x + geometry.box.width / 2,
+        y: geometry.box.y - geometry.box.height * 0.12
+      };
+    case "mouth":
+      return geometry.mouthCenter;
+    case "cheeks":
+      return {
+        x: geometry.eyeCenter.x,
+        y: geometry.mouthCenter.y
+      };
+    case "cheek-left":
+      return {
+        x: geometry.eyeCenter.x - geometry.box.width * 0.18,
+        y: geometry.mouthCenter.y
+      };
+    case "cheek-right":
+      return {
+        x: geometry.eyeCenter.x + geometry.box.width * 0.18,
+        y: geometry.mouthCenter.y
+      };
+    case "upper-right":
+      return {
+        x: geometry.box.x + geometry.box.width * 0.76,
+        y: geometry.browCenter.y - geometry.box.height * 0.08
+      };
+    default:
+      return geometry.eyeCenter;
+  }
+}
+
+function getFaceAnchorScale(geometry, part) {
+  const width = geometry.box.width;
+  switch (part) {
+    case "eyes":
+      return width * 0.92;
+    case "brow":
+      return width * 0.68;
+    case "top":
+    case "top-wide":
+      return width * 1.05;
+    case "mouth":
+      return width * 0.54;
+    case "cheeks":
+      return width * 0.44;
+    case "cheek-left":
+    case "cheek-right":
+      return width * 0.34;
+    case "upper-right":
+      return width * 0.32;
+    default:
+      return width * 0.5;
+  }
+}
+
+function getCoverRect(frameWidth, frameHeight, naturalWidth, naturalHeight) {
+  const frameRatio = frameWidth / frameHeight;
+  const imageRatio = naturalWidth / naturalHeight;
+
+  if (imageRatio > frameRatio) {
+    const renderedWidth = frameHeight * imageRatio;
+    return {
+      left: (frameWidth - renderedWidth) / 2,
+      top: 0,
+      width: renderedWidth,
+      height: frameHeight
+    };
+  }
+
+  const renderedHeight = frameWidth / imageRatio;
+  return {
+    left: 0,
+    top: (frameHeight - renderedHeight) / 2,
+    width: frameWidth,
+    height: renderedHeight
+  };
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function clampIndex(index, maxIndex) {
+  if (maxIndex < 0) {
+    return 0;
+  }
+  return Math.min(Math.max(index, 0), maxIndex);
 }
 
 function buildSlider(index, field, label, value, min, max, step) {

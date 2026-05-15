@@ -155,8 +155,10 @@ async function handleApi(req, res, requestUrl) {
     const password = String(body.password || "");
     const normalizedEmail = normalizeEmail(identifier);
     const normalizedUsername = normalizeUsername(identifier);
-    const user = db.users.find((entry) => entry.email === normalizedEmail || entry.username === normalizedUsername);
-    if (!user || !verifyPassword(password, user.passwordHash)) {
+    const candidateUsers = findLoginCandidates(db, normalizedEmail, normalizedUsername);
+    const user = candidateUsers.find((entry) => verifyPassword(password, entry.passwordHash));
+
+    if (!user) {
       return sendJson(res, 401, { error: "Invalid username, email, or password." });
     }
     if (!user.isVerified) {
@@ -835,6 +837,22 @@ function sendRedirect(res, location) { res.writeHead(302, { Location: location }
 function sanitizeUser(user) { return { id: user.id, email: user.email, username: user.username || "", name: user.name, isVerified: Boolean(user.isVerified), createdAt: user.createdAt, verifiedAt: user.verifiedAt || "" }; }
 function normalizeEmail(email) { return String(email || "").trim().toLowerCase(); }
 function normalizeUsername(username) { return String(username || "").trim().toLowerCase().replace(/[^a-z0-9._-]+/g, ""); }
+function findLoginCandidates(db, normalizedEmail, normalizedUsername) {
+  const byEmail = db.users.filter((entry) => entry.email === normalizedEmail);
+  const byUsername = db.users.filter((entry) => entry.username === normalizedUsername);
+  const seen = new Set();
+  const candidates = [];
+
+  byEmail.concat(byUsername).forEach((entry) => {
+    if (!entry || seen.has(entry.id)) {
+      return;
+    }
+    seen.add(entry.id);
+    candidates.push(entry);
+  });
+
+  return candidates;
+}
 function isDataUrl(value) { return /^data:image\/[a-zA-Z0-9.+-]+;base64,/.test(String(value || "")); }
 function extensionFromDataUrl(value) { const match = String(value).match(/^data:image\/([a-zA-Z0-9.+-]+);base64,/); if (!match) return "png"; if (match[1] === "jpeg") return "jpg"; return match[1]; }
 function escapeHtml(value) { return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"); }

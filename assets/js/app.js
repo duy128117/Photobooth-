@@ -60,6 +60,7 @@ const elements = {
   cameraAiButtons: document.querySelectorAll("[data-ai-mode]"),
   modeButtons: document.querySelectorAll("[data-section-mode]"),
   captureStickerButtons: document.querySelectorAll("[data-capture-sticker]"),
+  suggestCaptureStickerBtn: document.getElementById("suggest-capture-sticker-btn"),
   captureStatus: document.getElementById("capture-status"),
   uploadStatus: document.getElementById("upload-status"),
   editorStatus: document.getElementById("editor-status"),
@@ -99,6 +100,9 @@ let currentUser = null;
 let autosaveTimer = null;
 let hasBootstrapped = false;
 let lastDraftSavedAt = "";
+let toastTimer = null;
+let runtimeErrorTimer = null;
+let captureStatusTimer = null;
 
 initializeTheme(elements.themeToggle);
 window.__photoboothReportError = showRuntimeError;
@@ -617,7 +621,6 @@ function getDefaultLayoutForCount(imageCount) {
   return "classic-strip";
 }
 
-let toastTimer = null;
 function showToast(message) {
   elements.toast.textContent = message;
   elements.toast.classList.add("show");
@@ -627,8 +630,6 @@ function showToast(message) {
   }, 2200);
 }
 
-let runtimeErrorTimer = null;
-let captureStatusTimer = null;
 function showRuntimeError(error, context) {
   if (!elements.errorMessage) {
     console.error(error);
@@ -661,14 +662,14 @@ function showCaptureStatus(message, isSuccess) {
     if (!elements.captureDebug) {
       return;
     }
-    elements.captureDebug.textContent = "Sẵn sàng chụp";
+    elements.captureDebug.textContent = "San sang chup";
     elements.captureDebug.classList.remove("is-success", "is-error");
-  }, 3500);
+  }, 12000);
 }
 
 function formatRuntimeError(error, context) {
   const parts = [];
-  const prefix = context && context.prefix ? String(context.prefix) : "Lỗi";
+  const prefix = context && context.prefix ? String(context.prefix) : "Loi";
   const message = error && error.message ? error.message : String(error || "Unknown error");
   parts.push(prefix + ": " + message);
 
@@ -683,7 +684,7 @@ function formatRuntimeError(error, context) {
     if (columnNumber) {
       location.push(String(columnNumber));
     }
-    parts.push("Vị trí: " + location.join(":"));
+    parts.push("Vi tri: " + location.join(":"));
   }
 
   if (error && error.stack) {
